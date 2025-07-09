@@ -1,0 +1,24 @@
+.recommend-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* 1 column by default */
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  /* Tablet */
+  .recommend-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Desktop */
+  .recommend-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.recommend-grid > div {
+  height: 100%; /* Make children take full height */
+}

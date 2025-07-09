@@ -1,0 +1,70 @@
+/* MainLayout.css */
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Top navbar styling */
+.top-navbar,
+nav {
+  background: white; /* ✅ White background for top navbar */
+  color: #111827;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.main-content-area {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 299px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  border-right: 1px solid #e5e7eb;
+}
+
+.sidebar a,
+.sidebar button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #1f2937;
+  text-decoration: none;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  font-size: 1rem;
+}
+
+.sidebar a:hover,
+.sidebar button:hover {
+  background: #e0e7ff;
+  color: #1e40af;
+  transform: translateX(4px);
+}
+
+.sidebar button {
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+
+/* Main content area */
+.page-content {
+  flex: 1;
+  padding: 2rem;
+  background: #f3f4f6;
+  overflow-y: auto;
+}
