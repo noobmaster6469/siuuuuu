@@ -38,19 +38,21 @@ const NotificationPanel = () => {
   return (
     <div
       style={{
-        width: "100%",
-        maxWidth: "100%",
+        width: "100vw",
+        maxWidth: "100vw",
         minHeight: "100vh",
-        margin: "20px auto",
-        backgroundColor: "#fff",
-        borderRadius: 12,
-        boxShadow:
-          "0 4px 12px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06)",
+        height: "100vh",
+        margin: 0,
+        background: "#fff",
+        borderRadius: 0,
+        boxShadow: "none",
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
         color: "#1f2937",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
+        border: "none",
+        position: "relative",
       }}
     >
       {/* Header */}
@@ -58,21 +60,36 @@ const NotificationPanel = () => {
         style={{
           display: "flex",
           alignItems: "center",
-          padding: "16px 24px",
-          borderBottom: "1px solid #e5e7eb",
-          backgroundColor: "#f9fafb",
+          padding: "22px 32px 18px 32px",
+          borderBottom: "1.5px solid #e5e7eb",
+          background: "#f1f5f9",
           position: "relative",
+          minHeight: 70,
         }}
       >
-        <FaBell size={24} color="#facc15" />
+        <div
+          style={{
+            background: "#facc15",
+            borderRadius: "50%",
+            width: 44,
+            height: 44,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 2px 8px rgba(250,204,21,0.18)",
+          }}
+        >
+          <FaBell size={24} color="#fff" />
+        </div>
         <h2
           style={{
             margin: 0,
-            marginLeft: 12,
-            fontWeight: 700,
-            fontSize: 20,
-            color: "#111827",
+            marginLeft: 18,
+            fontWeight: 800,
+            fontSize: 24,
+            color: "#1e293b",
             flexGrow: 1,
+            letterSpacing: 0.5,
           }}
         >
           Notifications
@@ -101,19 +118,22 @@ const NotificationPanel = () => {
       {/* Notification List */}
       <div
         style={{
-          maxHeight: 400,
+          flex: 1,
+          minHeight: 0,
           overflowY: "auto",
-          padding: "16px 24px",
-          backgroundColor: "#fff",
+          padding: "24px 32px 24px 32px",
+          background: "#fff",
         }}
       >
         {notifications.length === 0 ? (
           <p
             style={{
               textAlign: "center",
-              color: "#6b7280",
-              fontSize: 16,
-              marginTop: 40,
+              color: "#64748b",
+              fontSize: 18,
+              marginTop: 60,
+              fontWeight: 500,
+              letterSpacing: 0.2,
             }}
           >
             No new notifications
@@ -123,61 +143,101 @@ const NotificationPanel = () => {
             <div
               key={n._id}
               style={{
-                backgroundColor: n.read ? "#f9fafb" : "#e0e7ff",
+                background: n.read ? "#f9fafb" : "#fff",
                 borderRadius: 10,
-                padding: "14px 20px",
+                padding: "16px 24px 12px 24px",
                 marginBottom: 14,
-                boxShadow:
-                  "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.1)",
-                cursor: "default",
-                transition: "background-color 0.3s ease",
+                boxShadow: "0 1px 2px rgba(30,64,175,0.04)",
+                cursor:
+                  n.type === "like" || n.type === "comment"
+                    ? "pointer"
+                    : "default",
+                transition: "background 0.2s, box-shadow 0.2s",
                 display: "flex",
                 flexDirection: "column",
+                border: n.read ? "1px solid #e5e7eb" : "1.5px solid #e5e7eb",
+                position: "relative",
               }}
-              onMouseEnter={(e) => {
-                if (!n.read) e.currentTarget.style.backgroundColor = "#c7d2fe";
-              }}
-              onMouseLeave={(e) => {
-                if (!n.read) e.currentTarget.style.backgroundColor = "#e0e7ff";
+              onClick={() => {
+                if ((n.type === "like" || n.type === "comment") && n.blogId) {
+                  navigate(`/blog/${n.blogId}`);
+                }
               }}
             >
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  marginBottom: 6,
-                  gap: 10,
+                  marginBottom: 8,
+                  gap: 12,
                   flexWrap: "wrap",
                 }}
               >
-                <strong
-                  onClick={() => goToSenderProfile(n.sender._id)}
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToSenderProfile(n.sender._id);
+                  }}
                   style={{
                     color: "#2563eb",
                     cursor: "pointer",
                     textDecoration: "underline",
                     fontSize: 16,
                     userSelect: "none",
+                    display: "inline-block",
                   }}
                   title={`Go to ${n.sender?.name}'s profile`}
                 >
                   {n.sender?.name}
-                </strong>
-                <span
-                  style={{
-                    color: "#374151",
-                    fontSize: 15,
-                    userSelect: "text",
-                  }}
-                >
-                  {n.type === "follow" ? "followed you" : n.message}
                 </span>
+                {n.type === "like" || n.type === "comment" ? (
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (n.blogId) navigate(`/blog/${n.blogId}`);
+                    }}
+                    style={{
+                      color: "#374151",
+                      fontSize: 15.5,
+                      userSelect: "text",
+                      marginLeft: 6,
+                      fontWeight: 500,
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                      transition: "color 0.2s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.color = "#1e40af")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color = "#374151")
+                    }
+                    title="Go to blog post"
+                  >
+                    {n.message}
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      color: "#374151",
+                      fontSize: 15.5,
+                      userSelect: "text",
+                      marginLeft: 6,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {n.type === "follow" ? "followed you" : n.message}
+                  </span>
+                )}
               </div>
               <small
                 style={{
-                  color: "#6b7280",
-                  fontSize: 13,
+                  color: "#64748b",
+                  fontSize: 13.5,
                   userSelect: "none",
+                  marginTop: 2,
+                  fontWeight: 400,
+                  letterSpacing: 0.1,
                 }}
               >
                 {new Date(n.createdAt).toLocaleString()}

@@ -1,12 +1,8 @@
-
-
-
-const mongoose = require('mongoose');
-const Blog = require('./blog.model');
+const mongoose = require("mongoose");
+const Blog = require("./blog.model");
 const { exec } = require("child_process");
 const path = require("path");
-const Like = require('../like/like.model'); // Adjust path if needed
-
+const Like = require("../like/like.model"); // Adjust path if needed
 
 const scriptPath = path.join(__dirname, "../../recommendation/recommend.py");
 
@@ -17,7 +13,7 @@ exports.createBlog = async (req, res) => {
     const author = new mongoose.Types.ObjectId(req.user.id);
 
     const normalizedCategories = Array.isArray(categories)
-      ? categories.map(cat => cat.toLowerCase())
+      ? categories.map((cat) => cat.toLowerCase())
       : [];
 
     const newBlog = await Blog.create({
@@ -69,11 +65,13 @@ exports.updateBlog = async (req, res) => {
     if (!blog) return res.status(404).json({ message: "Blog not found" });
 
     if (blog.author.toString() !== userId) {
-      return res.status(403).json({ message: "Not authorized to update this blog" });
+      return res
+        .status(403)
+        .json({ message: "Not authorized to update this blog" });
     }
 
     // Update only allowed fields
-    ['title', 'content', 'categories', 'image'].forEach(field => {
+    ["title", "content", "categories", "image"].forEach((field) => {
       if (updateData[field] !== undefined) blog[field] = updateData[field];
     });
 
@@ -102,7 +100,9 @@ exports.deleteBlog = async (req, res) => {
     }
 
     if (blog.author.toString() !== userId) {
-      return res.status(403).json({ message: "Not authorized to delete this blog" });
+      return res
+        .status(403)
+        .json({ message: "Not authorized to delete this blog" });
     }
 
     await Blog.findByIdAndDelete(blogId); // ✅ recommended method
@@ -136,6 +136,18 @@ exports.addComment = async (req, res) => {
     blog.comments.push(newComment);
     await blog.save();
 
+    // Create notification for blog author (if not commenting on own blog)
+    if (String(blog.author) !== String(req.user.id)) {
+      const Notification = require("../notification/notification.model");
+      await Notification.create({
+        type: "comment",
+        sender: req.user.id,
+        receiver: blog.author,
+        message: `${req.user.name} commented on your blog`,
+        blogId: blog._id,
+      });
+    }
+
     res.status(201).json({ comment: newComment });
   } catch (error) {
     console.error("Add comment error:", error.message);
@@ -156,7 +168,9 @@ exports.deleteComment = async (req, res) => {
     if (!comment) return res.status(404).json({ message: "Comment not found" });
 
     if (comment.user._id.toString() !== userId) {
-      return res.status(403).json({ message: "Unauthorized to delete this comment" });
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to delete this comment" });
     }
 
     comment.remove();
@@ -180,25 +194,26 @@ exports.getBlogsByUser = async (req, res) => {
   }
 };
 
-
 exports.getUserRecommendations = async (req, res) => {
   try {
     const likeCounts = await Like.aggregate([
       { $group: { _id: "$blogId", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
-      { $limit: 7 }
+      { $limit: 7 },
     ]);
 
-    const blogIds = likeCounts.map(l => l._id);
+    const blogIds = likeCounts.map((l) => l._id);
     const blogs = await Blog.find({ _id: { $in: blogIds } })
       .populate("author", "name")
       .lean();
 
-    const result = blogs.map(blog => {
-      const likeObj = likeCounts.find(l => l._id.toString() === blog._id.toString());
+    const result = blogs.map((blog) => {
+      const likeObj = likeCounts.find(
+        (l) => l._id.toString() === blog._id.toString()
+      );
       return {
         ...blog,
-        likeCount: likeObj?.count || 0
+        likeCount: likeObj?.count || 0,
       };
     });
 
@@ -208,7 +223,6 @@ exports.getUserRecommendations = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 exports.getTrendingBlogs = async (req, res) => {
   try {
@@ -285,7 +299,6 @@ exports.getAllBlogsForRecommendation = async (req, res) => {
   }
 };
 
-
 exports.getContentRecommendations = (req, res) => {
   const userQuery = decodeURIComponent(req.params.title).trim(); // ✅ Fix added
   const scriptPath = path.join(__dirname, "../recommendation/recommend.py");
@@ -313,7 +326,6 @@ exports.getContentRecommendations = (req, res) => {
 
 // blog.controller.js
 
-
 exports.getRelatedBlogs = async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.blogId);
@@ -322,7 +334,7 @@ exports.getRelatedBlogs = async (req, res) => {
     const category = blog.categories?.[0];
     const relatedBlogs = await Blog.find({
       categories: category,
-      _id: { $ne: blog._id }
+      _id: { $ne: blog._id },
     }).limit(3);
 
     res.status(200).json({ relatedBlogs });
@@ -335,7 +347,10 @@ exports.getRelatedBlogs = async (req, res) => {
 // blog.controller.js
 exports.getCollaborativeRecommendations = (req, res) => {
   const userId = req.user.id; // must be from verifyToken middleware
-  const scriptPath = path.join(__dirname, "../recommendation/recommend_collab.py");
+  const scriptPath = path.join(
+    __dirname,
+    "../recommendation/recommend_collab.py"
+  );
   const command = `python "${scriptPath}" "${userId}"`;
 
   console.log("Running collaborative recommend command:", command);
@@ -343,7 +358,9 @@ exports.getCollaborativeRecommendations = (req, res) => {
   exec(command, (error, stdout, stderr) => {
     if (error) {
       console.error("Python Error:", error);
-      return res.status(500).json({ message: "Recommendation failed", error: error.message });
+      return res
+        .status(500)
+        .json({ message: "Recommendation failed", error: error.message });
     }
 
     if (stderr) {
@@ -363,27 +380,35 @@ exports.getCollaborativeRecommendations = (req, res) => {
 
 exports.getMetadataByIds = async (req, res) => {
   const ids = req.query.ids?.split(",");
-  if (!ids || ids.length === 0) return res.status(400).json({ message: "No blog IDs provided" });
+  if (!ids || ids.length === 0)
+    return res.status(400).json({ message: "No blog IDs provided" });
 
   try {
-    const blogs = await Blog.find({ _id: { $in: ids } }).populate("author", "name");
+    const blogs = await Blog.find({ _id: { $in: ids } }).populate(
+      "author",
+      "name"
+    );
     res.status(200).json(blogs);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch blogs" });
   }
 };
 
-
 exports.getUserCollaborativeRecommendations = (req, res) => {
-  const userId = req.params.userId;  // <-- userId not blogId
-  const scriptPath = path.join(__dirname, "../recommendation/recommend_collab.py");
+  const userId = req.params.userId; // <-- userId not blogId
+  const scriptPath = path.join(
+    __dirname,
+    "../recommendation/recommend_collab.py"
+  );
 
   const command = `python "${scriptPath}" "${userId}"`;
 
   exec(command, (error, stdout, stderr) => {
     if (error) {
       console.error("Python Error:", error);
-      return res.status(500).json({ message: "Recommendation failed", error: error.message });
+      return res
+        .status(500)
+        .json({ message: "Recommendation failed", error: error.message });
     }
 
     try {
@@ -395,7 +420,6 @@ exports.getUserCollaborativeRecommendations = (req, res) => {
     }
   });
 };
-
 
 // 🚀 CATEGORY-BASED RECOMMENDATION
 exports.recommendByCategoryPublic = async (req, res) => {
@@ -463,10 +487,3 @@ exports.recommendByCategoryPublic = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch recommendations" });
   }
 };
-
-
-
-
-
-
-
