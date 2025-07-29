@@ -37,7 +37,6 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/blog/:id" element={<BlogDetail />} />
           <Route path="/update-blog/:id" element={<UpdateBlogPage />} />
-          <Route path="/admin-update-blog/:id" element={<AdminUpdate />} />
           <Route path="/category/:categoryName" element={<CategoryPage />} />
           <Route path="/user/:userId" element={<AuthorProfile />} />
           <Route path="/recommend" element={<RecommendPage />} />
@@ -45,6 +44,7 @@ function App() {
           <Route path="/notifications" element={<NotificationDropDown />} />
         </Route>
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin-update-blog/:id" element={<AdminUpdate />} />
 
         {/* adminPage */}
 

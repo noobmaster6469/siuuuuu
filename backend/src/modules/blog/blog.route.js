@@ -6,12 +6,62 @@ const Blog = require("./blog.model");
 const mongoose = require("mongoose");
 
 // 🔍 Public Routes FIRST
-router.get("/all", async (req, res) => {
+router.get("/all", verifyToken, async (req, res) => {
   try {
-    const blogs = await Blog.find({}, "_id title content");
-    res.json({ blogs });
+    const userId = mongoose.Types.ObjectId(req.user._id);
+
+    // 1. Get 10 posts liked by the user
+    const likedPosts = await Blog.find({ likes: userId })
+      .limit(10)
+      .select("_id")
+      .lean();
+
+    if (!likedPosts.length) {
+      // If user hasn't liked anything, fallback to latest 20 blogs
+      const fallbackBlogs = await Blog.find()
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .select("_id title content")
+        .lean();
+      return res.json({ blogs: fallbackBlogs });
+    }
+
+    const likedPostIds = likedPosts.map((post) => post._id);
+
+    // 2. Find neighbor users who liked these posts, excluding current user
+    const neighbors = await Blog.aggregate([
+      { $match: { _id: { $in: likedPostIds } } },
+      { $unwind: "$likes" },
+      { $match: { likes: { $ne: userId } } },
+      { $sample: { size: 20 } }, // sample neighbors (2 per liked post)
+      { $group: { _id: null, userIds: { $addToSet: "$likes" } } },
+    ]);
+
+    const neighborUserIds = neighbors.length > 0 ? neighbors[0].userIds : [];
+
+    if (!neighborUserIds.length) {
+      // No neighbors found, fallback again
+      const fallbackBlogs = await Blog.find()
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .select("_id title content")
+        .lean();
+      return res.json({ blogs: fallbackBlogs });
+    }
+
+    // 3. Find posts liked by neighbors but not by current user
+    const recommendedBlogs = await Blog.find({
+      likes: { $in: neighborUserIds, $nin: [userId] },
+      _id: { $nin: likedPostIds },
+    })
+      .limit(20)
+      .select("_id title content")
+      .lean();
+
+    return res.json({ blogs: recommendedBlogs });
   } catch (err) {
-    res.status(500).json({ message: "Failed to fetch blogs", err });
+    console.error("Error fetching recommended blogs:", err);
+    return res.status(500).json({ message: "Failed to fetch blogs", err });
   }
 });
 

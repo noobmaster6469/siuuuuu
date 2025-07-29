@@ -1,11 +1,12 @@
 /* index.css */
-*{
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Poppins", sans-serif;
   background-color: #f3f1ed;
 }
 
@@ -82,7 +83,6 @@ p {
   height: auto;
 }
 
-
 .popup-error {
   position: fixed;
   top: 20px;
@@ -92,18 +92,29 @@ p {
   color: white;
   padding: 1rem 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   font-weight: 600;
   animation: fadeInOut 4s ease forwards;
   z-index: 9999;
 }
 
-
 @keyframes fadeInOut {
-  0%   {opacity: 0; transform: translateY(-10px);}
-  10%  {opacity: 1; transform: translateY(0);}
-  90%  {opacity: 1; transform: translateY(0);}
-  100% {opacity: 0; transform: translateY(-10px);}
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
 }
 
 .heart {
@@ -112,4 +123,8 @@ p {
 
 .heart:active {
   transform: scale(1.2);
+}
+
+.titleOfBlog {
+  text-align: center;
 }

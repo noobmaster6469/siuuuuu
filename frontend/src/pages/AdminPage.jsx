@@ -50,7 +50,7 @@ const AdminPage = () => {
       <div
         style={{
           maxWidth: "1200px",
-          margin: "0 auto",
+          margin: "88px auto",
           padding: "20px",
         }}
       >

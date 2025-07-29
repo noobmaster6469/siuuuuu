@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -23,7 +21,9 @@ const BlogDetail = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/blog/${id}`);
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/blog/${id}`
+        );
         setBlog(res.data);
         setComments(res.data.comments || []);
       } catch (err) {
@@ -33,6 +33,8 @@ const BlogDetail = () => {
 
     fetchBlog();
   }, [id]);
+
+  console.log("Blog data:", blog);
 
   // Fetch like status
   useEffect(() => {
@@ -131,7 +133,14 @@ const BlogDetail = () => {
 
       <p style={{ fontSize: "1.1rem", lineHeight: "1.6" }}>{blog.content}</p>
 
-      <p style={{ fontSize: 15, color: "#555", fontStyle: "italic", marginTop: 12 }}>
+      <p
+        style={{
+          fontSize: 15,
+          color: "#555",
+          fontStyle: "italic",
+          marginTop: 12,
+        }}
+      >
         <strong>Category:</strong> {blog.categories?.join(", ")}
       </p>
 
@@ -146,7 +155,8 @@ const BlogDetail = () => {
             cursor: "pointer",
           }}
         >
-          <FontAwesomeIcon icon={liked ? solidHeart : regularHeart} /> Like ({likeCount})
+          <FontAwesomeIcon icon={liked ? solidHeart : regularHeart} /> Like (
+          {likeCount})
         </button>
       </div>
 
@@ -185,7 +195,9 @@ const BlogDetail = () => {
 
         <div style={{ marginTop: "1rem" }}>
           {comments.length === 0 ? (
-            <p style={{ color: "#888", fontStyle: "italic" }}>No comments yet.</p>
+            <p style={{ color: "#888", fontStyle: "italic" }}>
+              No comments yet.
+            </p>
           ) : (
             comments.map((c, i) => (
               <div

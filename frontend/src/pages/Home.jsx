@@ -3,6 +3,7 @@ import axios from "axios";
 import BlogCard from "../components/BlogCard";
 import CollaborativeRecommendations from "../components/CollaborativeRecommendations";
 import CategoryRecommendations from "../components/CategoryRecommendations";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
@@ -11,6 +12,16 @@ const Home = () => {
   const [showAllBlogs, setShowAllBlogs] = useState(false);
 
   const user = JSON.parse(localStorage.getItem("user"));
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user?.role) {
+      if (user.role === "admin") {
+        navigate("/admin");
+      }
+    }
+  }, [user]);
 
   const fetchData = async () => {
     try {
@@ -45,14 +56,13 @@ const Home = () => {
     <div
       style={{
         maxWidth: 1300,
-        margin: "40px auto",
         padding: "0 20px",
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
         color: "#222",
         overflowX: "hidden",
       }}
     >
-      <h1 style={{ fontWeight: "700", marginBottom: 8 }}>
+      <h1 style={{ fontWeight: "700", marginBottom: "30px" }}>
         Welcome{user?.name ? `, ${user.name}` : ""}
       </h1>
 
@@ -67,7 +77,7 @@ const Home = () => {
               color: "#4f46e5",
             }}
           >
-            🔵 Latest Blogs
+            Latest Blogs
           </h2>
 
           <div
@@ -130,7 +140,7 @@ const Home = () => {
               display: "flex",
               flexDirection: "column",
               gap: "20px",
-              background: "black",
+              background: "#9292920f",
               padding: "20px",
               borderRadius: "10px",
               boxShadow: "0 2px 8px rgba(0,0,0,0.06)",

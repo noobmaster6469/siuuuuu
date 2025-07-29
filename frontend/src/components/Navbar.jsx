@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NotificationsDropdown from "./NotificationDropdown";
 import SearchUser from "./SearchUser";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 // import BlogSearchBox from "./BlogSearchBox"; // <-- Import here
 
 const categories = [
@@ -56,8 +58,10 @@ const Navbar = () => {
   };
 
   const navStyle = {
-    position: "sticky",
+    position: "fixed",
     top: 0,
+    left: 0,
+    right: 0,
     zIndex: 1000,
     display: "flex",
     justifyContent: "space-between",
@@ -66,6 +70,7 @@ const Navbar = () => {
     backgroundColor: "#111827",
     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
     fontFamily: "Segoe UI, sans-serif",
+    minHeight: "82px",
   };
 
   const brandStyle = {
@@ -143,7 +148,7 @@ const Navbar = () => {
               </div>
             )}
 
-            <SearchUser />
+            {user.role != "admin" && <SearchUser />}
 
             <div
               onClick={() => navigate("/profile")}
@@ -156,33 +161,51 @@ const Navbar = () => {
                 borderRadius: "9999px",
               }}
             >
-              <div
-                style={{
-                  backgroundColor: "#facc15",
-                  color: "#1f2937",
-                  borderRadius: "50%",
-                  width: "36px",
-                  height: "36px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: "bold",
-                  fontSize: "1rem",
-                  textTransform: "uppercase",
-                }}
-                title={`Logged in as ${user?.name}`}
-              >
-                {user?.name?.charAt(0) || "U"}
-              </div>
-              <span
-                style={{
-                  fontWeight: "600",
-                  fontSize: "1.1rem",
-                  color: "#facc15",
-                }}
-              >
-                {user?.name}
-              </span>
+              {user.role != "admin" && (
+                <>
+                  <div
+                    style={{
+                      backgroundColor: "#facc15",
+                      color: "#1f2937",
+                      borderRadius: "50%",
+                      width: "36px",
+                      height: "36px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontWeight: "bold",
+                      fontSize: "1rem",
+                      textTransform: "uppercase",
+                      padding: "10px",
+                    }}
+                    title={`Logged in as ${user?.name}`}
+                  >
+                    {user?.name?.charAt(0) || "U"}
+                  </div>
+                  <span
+                    style={{
+                      fontWeight: "600",
+                      fontSize: "1.1rem",
+                      color: "#facc15",
+                    }}
+                  >
+                    {user?.name}
+                  </span>
+                </>
+              )}
+
+              {user.role == "admin" && (
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                >
+                  <FontAwesomeIcon icon={faRightFromBracket} /> Logout
+                </button>
+              )}
             </div>
 
             {/* Logout */}

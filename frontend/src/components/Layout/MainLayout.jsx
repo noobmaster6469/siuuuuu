@@ -99,7 +99,7 @@ const MainLayout = () => {
 
       <div
         className="main-content-area"
-        style={{ display: "flex", flexWrap: "nowrap" }}
+        style={{ display: "flex", flexWrap: "nowrap", marginTop: "84px" }}
       >
         <nav
           className="sidebar"
@@ -108,10 +108,17 @@ const MainLayout = () => {
             flexDirection: "column",
             width: "220px",
             padding: "1rem",
+            minHeight: "100vh",
           }}
         >
           {isLoggedIn ? (
-            <>
+            <div
+              style={{
+                position: "fixed",
+                top: "105px",
+                background: "white",
+              }}
+            >
               <Link to="/">
                 <FontAwesomeIcon icon={faHome} /> Home
               </Link>
@@ -137,7 +144,7 @@ const MainLayout = () => {
               >
                 <FontAwesomeIcon icon={faRightFromBracket} /> Logout
               </button>
-            </>
+            </div>
           ) : (
             <>
               <Link to="/login">

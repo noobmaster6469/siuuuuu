@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Navbar from "../components/Navbar";
 
 const AdminUpdate = () => {
   const { id } = useParams();
@@ -78,77 +79,87 @@ const AdminUpdate = () => {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div style={{ maxWidth: "600px", margin: "2rem auto", padding: "1rem" }}>
-      <h2>Update Blog</h2>
-
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+    <>
+      <Navbar />
+      <div
+        style={{
+          maxWidth: "600px",
+          margin: "2rem auto",
+          padding: "1rem",
+          marginTop: "88px",
+        }}
       >
-        <label>
-          Title:
-          <input
-            type="text"
-            name="title"
-            value={blogData.title}
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: "0.5rem" }}
-          />
-        </label>
+        <h2>Update Blog</h2>
 
-        <label>
-          Content:
-          <textarea
-            name="content"
-            value={blogData.content}
-            onChange={handleChange}
-            rows={8}
-            required
-            style={{ width: "100%", padding: "0.5rem" }}
-          />
-        </label>
-
-        <label>
-          Categories (comma separated):
-          <input
-            type="text"
-            name="categories"
-            value={blogData.categories}
-            onChange={handleChange}
-            style={{ width: "100%", padding: "0.5rem" }}
-            placeholder="e.g. tech, coding, javascript"
-          />
-        </label>
-
-        <label>
-          Image URL:
-          <input
-            type="text"
-            name="image"
-            value={blogData.image}
-            onChange={handleChange}
-            style={{ width: "100%", padding: "0.5rem" }}
-            placeholder="Optional"
-          />
-        </label>
-
-        <button
-          type="submit"
-          style={{
-            padding: "0.75rem",
-            backgroundColor: "#4f46e5",
-            color: "white",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          Update Blog
-        </button>
-      </form>
-    </div>
+          <label>
+            Title:
+            <input
+              type="text"
+              name="title"
+              value={blogData.title}
+              onChange={handleChange}
+              required
+              style={{ width: "100%", padding: "0.5rem" }}
+            />
+          </label>
+
+          <label>
+            Content:
+            <textarea
+              name="content"
+              value={blogData.content}
+              onChange={handleChange}
+              rows={8}
+              required
+              style={{ width: "100%", padding: "0.5rem" }}
+            />
+          </label>
+
+          <label>
+            Categories (comma separated):
+            <input
+              type="text"
+              name="categories"
+              value={blogData.categories}
+              onChange={handleChange}
+              style={{ width: "100%", padding: "0.5rem" }}
+              placeholder="e.g. tech, coding, javascript"
+            />
+          </label>
+
+          <label>
+            Image URL:
+            <input
+              type="text"
+              name="image"
+              value={blogData.image}
+              onChange={handleChange}
+              style={{ width: "100%", padding: "0.5rem" }}
+              placeholder="Optional"
+            />
+          </label>
+
+          <button
+            type="submit"
+            style={{
+              padding: "0.75rem",
+              backgroundColor: "#4f46e5",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
+          >
+            Update Blog
+          </button>
+        </form>
+      </div>
+    </>
   );
 };
 
